@@ -1,0 +1,12 @@
+# Dépendances (réinstallées avec npm install)
+node_modules/
+
+# Secrets et configuration locale : ne jamais committer
+.env
+
+# Base de données générée localement
+*.db
+
+# Builds et fichiers système
+dist/
+.DS_Store

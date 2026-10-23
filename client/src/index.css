@@ -1,0 +1,27 @@
+/* Couleurs et police de la maquette, définies une seule fois ici.
+   Pour changer le rouge partout dans l'appli, il suffit de modifier --rouge. */
+:root {
+  --rouge: #ff5757;
+  --noir: #111111;
+  --blanc: #ffffff;
+  --gris-clair: #f2f2f2;
+  --police: 'Montserrat', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--police);
+  color: var(--noir);
+  background: var(--blanc);
+}
+
+/* L'appli est pensée "mobile d'abord" : largeur max d'un téléphone, centrée */
+#root {
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+}

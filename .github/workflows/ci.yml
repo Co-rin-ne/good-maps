@@ -1,0 +1,26 @@
+# Intégration continue : à chaque push et pull request, GitHub vérifie
+# que le code du client et du serveur passe le lint et les tests.
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Le même job est lancé deux fois : une fois par dossier
+        dossier: [client, server]
+    defaults:
+      run:
+        working-directory: ${{ matrix.dossier }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ${{ matrix.dossier }}/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test

@@ -1,0 +1,29 @@
+/* En-tête : bouton filtres à gauche, logo au centre, bouton info à droite */
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.logo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.logo-good {
+  color: var(--rouge);
+}
+
+.bouton-rond {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--noir);
+  border-radius: 50%;
+  background: var(--blanc);
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+}
