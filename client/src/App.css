@@ -6,15 +6,9 @@
   padding: 16px;
 }
 
-.logo {
+.entete-titre {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.logo-good {
-  color: var(--rouge);
+  font-size: inherit;
 }
 
 .bouton-rond {
@@ -26,6 +20,11 @@
   font-size: 1.3rem;
   font-weight: 700;
   cursor: pointer;
+}
+
+.salutation {
+  margin: 0 16px 12px;
+  font-weight: 600;
 }
 
 /* Message affiché si l'API ne répond pas */

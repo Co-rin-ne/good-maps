@@ -1,0 +1,15 @@
+/* Plein écran, logo centré */
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.splash-slogan {
+  margin: 8px 0 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
