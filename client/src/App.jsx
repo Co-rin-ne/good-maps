@@ -41,6 +41,10 @@ function App() {
     enregistrerProfil(nouveauProfil)
     setProfil(nouveauProfil)
     setFormulaireVisible(false)
+    // La suggestion affichée correspondait à l'ancien profil : on repart de zéro
+    setSuggestion(null)
+    setErreurSuggestion(null)
+    setDejaVus([])
   }
 
   async function obtenirSuggestion() {
@@ -71,7 +75,7 @@ function App() {
   return (
     <>
       <header className="entete">
-        <button className="bouton-rond" aria-label="Filtres">☰</button>
+        <button className="bouton-rond" aria-label="Filtres" onClick={() => setFormulaireVisible(true)}>☰</button>
         <h1 className="entete-titre">
           <Logo />
         </h1>
@@ -89,9 +93,19 @@ function App() {
         {suggestion && <FicheSuggestion suggestion={suggestion} />}
       </main>
 
-      {formulaireVisible && (
+      {/* Sans profil : fenêtre "Bienvenue !". Avec un profil (bouton ☰) : modification du profil */}
+      {formulaireVisible && (profil ? (
+        <FormulaireBienvenue
+          onValider={validerProfil}
+          onFermer={() => setFormulaireVisible(false)}
+          profilInitial={profil}
+          titre="Mon profil"
+          intro="Modifiez vos préférences : les prochaines suggestions en tiendront compte."
+          texteBouton="Enregistrer"
+        />
+      ) : (
         <FormulaireBienvenue onValider={validerProfil} onFermer={() => setFormulaireVisible(false)} />
-      )}
+      ))}
     </>
   )
 }

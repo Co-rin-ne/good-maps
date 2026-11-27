@@ -80,6 +80,36 @@ test('le bouton affiche une suggestion, sans envoyer le prénom au serveur', asy
   expect(JSON.parse(options.body).profil.prenom).toBeUndefined()
 })
 
+test('le bouton filtres ouvre le profil pré-rempli et efface la suggestion après modification', async () => {
+  enregistrerProfil({
+    prenom: 'Corinne', ville: 'paris', accessibilite: 'aucun',
+    interets: ['culture'], budget: '€€', compagnie: 'amis',
+  })
+  const suggestion = {
+    lieu: { id: 1, nom: 'Opéra Garnier', latitude: 48.872, longitude: 2.3316, adresse: 'Paris',
+      heure_ouverture: '10:00', heure_fermeture: '17:00', site: null, telephone: null },
+    titre: "Visite de l'Opéra Garnier", description: 'Une belle visite.', ouvert: true, source: 'ia',
+  }
+  vi.stubGlobal('fetch', vi.fn(async (url) => ({
+    ok: true,
+    json: async () => (url === '/api/suggestions' ? suggestion : []),
+  })))
+
+  render(<App />)
+  await passerLeSplash()
+  await act(async () => screen.getByRole('button', { name: 'Obtenir des suggestions' }).click())
+  expect(screen.getByRole('heading', { name: "Visite de l'Opéra Garnier" })).toBeInTheDocument()
+
+  await act(async () => screen.getByRole('button', { name: 'Filtres' }).click())
+  expect(screen.getByRole('dialog', { name: 'Mon profil' })).toBeInTheDocument()
+  expect(screen.getByLabelText('Prénom')).toHaveValue('Corinne')
+
+  await act(async () => screen.getByRole('button', { name: 'Enregistrer' }).click())
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: "Visite de l'Opéra Garnier" })).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Obtenir des suggestions' })).toBeInTheDocument()
+})
+
 test("affiche un message si l'API ne répond pas", async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }))
   render(<App />)
