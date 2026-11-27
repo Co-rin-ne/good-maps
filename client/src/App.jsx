@@ -1,6 +1,7 @@
 // Composant principal : enchaîne les écrans de la maquette.
 // 1. Écran de démarrage  2. Formulaire de bienvenue (si pas de profil)  3. Carte
 import { useCallback, useEffect, useState } from 'react'
+import APropos from './components/APropos.jsx'
 import Carte from './components/Carte.jsx'
 import FicheSuggestion from './components/FicheSuggestion.jsx'
 import FormulaireBienvenue from './components/FormulaireBienvenue.jsx'
@@ -18,6 +19,7 @@ function App() {
   const [profil, setProfil] = useState(chargerProfil)
   // Le formulaire s'affiche seulement si aucun profil n'est enregistré
   const [formulaireVisible, setFormulaireVisible] = useState(() => profil === null)
+  const [aProposVisible, setAProposVisible] = useState(false)
   // Suggestion affichée sous la carte, et état de la demande en cours
   const [suggestion, setSuggestion] = useState(null)
   const [chargement, setChargement] = useState(false)
@@ -79,7 +81,7 @@ function App() {
         <h1 className="entete-titre">
           <Logo />
         </h1>
-        <button className="bouton-rond" aria-label="Informations">i</button>
+        <button className="bouton-rond" aria-label="Informations" onClick={() => setAProposVisible(true)}>i</button>
       </header>
       <main>
         {erreur && <p className="message-erreur" role="alert">{erreur}</p>}
@@ -106,6 +108,8 @@ function App() {
       ) : (
         <FormulaireBienvenue onValider={validerProfil} onFermer={() => setFormulaireVisible(false)} />
       ))}
+
+      {aProposVisible && <APropos onFermer={() => setAProposVisible(false)} />}
     </>
   )
 }
