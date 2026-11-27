@@ -97,3 +97,25 @@ test('corrige les contractions oubliées par l\'IA', () => {
   // Ne touche pas aux mots qui contiennent ces lettres
   assert.equal(corrigerContractions('Visite de leur quartier'), 'Visite de leur quartier');
 });
+
+test('les favoris ne sont pas reproposés mais sont donnés à l\'IA', async () => {
+  let recu = {};
+  const demander = demarrer(async (p, candidats, heure, lieuxAimes) => {
+    recu = { candidats, lieuxAimes };
+    return null;
+  });
+
+  // On récupère l'id d'un lieu culture accessible pour le mettre en favori
+  const premiere = await (await demander({ profil })).json();
+  const idFavori = premiere.lieu.id;
+
+  await demander({ profil, favoris: [idFavori] });
+  assert.ok(!recu.candidats.some((lieu) => lieu.id === idFavori));
+  assert.deepEqual(recu.lieuxAimes.map((lieu) => lieu.id), [idFavori]);
+});
+
+test('une liste "favoris" invalide est refusée', async () => {
+  const demander = demarrer(async () => null);
+  assert.equal((await demander({ profil, favoris: 'tout' })).status, 400);
+  assert.equal((await demander({ profil, favoris: [1.5] })).status, 400);
+});

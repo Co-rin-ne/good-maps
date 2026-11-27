@@ -12,14 +12,15 @@ export async function recupererLieux() {
 
 // Demande une suggestion adaptée au profil.
 // exclure : identifiants des lieux déjà proposés, pour varier les suggestions.
-export async function demanderSuggestion(profil, exclure = []) {
+// favoris : identifiants des lieux aimés, pour recommander des lieux qui leur ressemblent.
+export async function demanderSuggestion(profil, exclure = [], favoris = []) {
   // Le prénom n'est pas envoyé : le serveur n'en a pas besoin (moins de données personnelles)
   const { ville, accessibilite, interets, budget, compagnie } = profil
 
   const reponse = await fetch('/api/suggestions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ profil: { ville, accessibilite, interets, budget, compagnie }, exclure }),
+    body: JSON.stringify({ profil: { ville, accessibilite, interets, budget, compagnie }, exclure, favoris }),
   })
   const donnees = await reponse.json().catch(() => ({}))
   if (!reponse.ok) {
