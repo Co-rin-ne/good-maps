@@ -1,14 +1,8 @@
 // Routes des lieux. La base de données est passée en paramètre,
 // ce qui permet aux tests d'utiliser une base en mémoire.
 import { Router } from 'express';
-
-// Seules valeurs acceptées pour le filtre (on ne fait pas confiance à l'utilisateur)
-const CATEGORIES = ['culture', 'nature', 'sport', 'gastronomie'];
-
-// SQLite stocke les booléens en 0/1 : on les convertit en true/false pour le front
-function formaterLieu(lieu) {
-  return { ...lieu, accessible_pmr: lieu.accessible_pmr === 1 };
-}
+// CATEGORIES : seules valeurs acceptées pour le filtre (on ne fait pas confiance à l'utilisateur)
+import { CATEGORIES, formaterLieu } from '../services/lieux.js';
 
 export default function creerRouterLieux(db) {
   const router = Router();

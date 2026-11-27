@@ -35,3 +35,25 @@
   background: #ffe5e5;
   color: #a10000;
 }
+
+/* Gros bouton rouge sous la carte */
+.bouton-suggestions {
+  display: block;
+  width: calc(100% - 48px);
+  margin: 20px 24px;
+  padding: 14px;
+  border: none;
+  border-radius: 4px;
+  background: var(--rouge);
+  color: var(--blanc);
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.bouton-suggestions:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
