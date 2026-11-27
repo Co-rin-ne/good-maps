@@ -1,6 +1,6 @@
 // Tests de la fiche de suggestion
-import { render, screen } from '@testing-library/react'
-import { test, expect } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { test, expect, vi } from 'vitest'
 import FicheSuggestion from './FicheSuggestion.jsx'
 import { formaterHeure } from '../services/horaires.js'
 
@@ -51,4 +51,17 @@ test("n'affiche que les boutons dont l'information existe", () => {
 test("prévient quand la suggestion ne vient pas de l'IA", () => {
   render(<FicheSuggestion suggestion={{ ...suggestion, source: 'secours' }} />)
   expect(screen.getByText(/L'IA n'a pas pu répondre/)).toBeInTheDocument()
+})
+
+test('le cœur indique si le lieu est en favori et prévient au clic', () => {
+  const onBasculerFavori = vi.fn()
+  const { rerender } = render(<FicheSuggestion suggestion={suggestion} onBasculerFavori={onBasculerFavori} />)
+
+  const coeur = screen.getByRole('button', { name: 'Ajouter aux favoris' })
+  expect(coeur).toHaveAttribute('aria-pressed', 'false')
+  fireEvent.click(coeur)
+  expect(onBasculerFavori).toHaveBeenCalledWith(1)
+
+  rerender(<FicheSuggestion suggestion={suggestion} estFavori onBasculerFavori={onBasculerFavori} />)
+  expect(screen.getByRole('button', { name: 'Retirer des favoris' })).toHaveAttribute('aria-pressed', 'true')
 })

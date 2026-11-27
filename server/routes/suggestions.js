@@ -27,6 +27,11 @@ export function corrigerContractions(texte) {
   return CONTRACTIONS.reduce((resultat, [motif, remplacement]) => resultat.replace(motif, remplacement), texte);
 }
 
+// Une liste d'identifiants de lieux est valide si c'est un tableau d'au plus 50 entiers
+function estListeIds(valeur) {
+  return Array.isArray(valeur) && valeur.length <= 50 && valeur.every(Number.isInteger);
+}
+
 // Vérifie la réponse de l'IA. Renvoie null si elle est inutilisable.
 function verifierReponseIA(reponse, candidats) {
   if (typeof reponse !== 'object' || reponse === null) return null;
@@ -51,19 +56,26 @@ export default function creerRouterSuggestions(db, { demanderIA, horloge }) {
   const router = Router();
 
   router.post('/', async (req, res) => {
-    const { profil, exclure = [] } = req.body ?? {};
+    // exclure : lieux déjà proposés ; favoris : lieux aimés par la personne
+    const { profil, exclure = [], favoris = [] } = req.body ?? {};
 
     const invalides = champsInvalides(profil);
     if (invalides.length > 0) {
       return res.status(400).json({ erreur: `Profil invalide : ${invalides.join(', ')}` });
     }
-    if (!Array.isArray(exclure) || exclure.length > 50 || !exclure.every(Number.isInteger)) {
+    if (!estListeIds(exclure)) {
       return res.status(400).json({ erreur: 'Liste "exclure" invalide' });
+    }
+    if (!estListeIds(favoris)) {
+      return res.status(400).json({ erreur: 'Liste "favoris" invalide' });
     }
 
     const heure = heureParis(horloge());
     const lieux = db.prepare('SELECT * FROM lieux').all();
-    const candidats = filtrerCandidats(lieux, profil, heure, exclure)
+    // Les favoris sont déjà connus de la personne : on ne les repropose pas,
+    // mais on les donne à l'IA pour qu'elle propose un lieu qui leur ressemble
+    const lieuxAimes = lieux.filter((lieu) => favoris.includes(lieu.id));
+    const candidats = filtrerCandidats(lieux, profil, heure, [...exclure, ...favoris])
       .slice(0, MAX_CANDIDATS)
       .map((lieu) => ({ ...lieu, ouvert: estOuvert(lieu, heure) }));
 
@@ -78,7 +90,7 @@ export default function creerRouterSuggestions(db, { demanderIA, horloge }) {
     // l'utilisateur a toujours une suggestion fiable.
     let suggestion = null;
     try {
-      suggestion = verifierReponseIA(await demanderIA(profil, candidats, heure), candidats);
+      suggestion = verifierReponseIA(await demanderIA(profil, candidats, heure, lieuxAimes), candidats);
     } catch (erreur) {
       console.error('Erreur IA :', erreur.message);
     }

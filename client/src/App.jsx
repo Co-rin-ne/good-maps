@@ -9,6 +9,7 @@ import Logo from './components/Logo.jsx'
 import Splash from './components/Splash.jsx'
 import { recupererLieux, demanderSuggestion } from './services/api.js'
 import { chargerProfil, enregistrerProfil } from './services/profil.js'
+import { chargerFavoris, enregistrerFavoris, basculerFavori } from './services/favoris.js'
 import './App.css'
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
   const [erreurSuggestion, setErreurSuggestion] = useState(null)
   // Lieux déjà proposés, pour ne pas reproposer le même à chaque clic
   const [dejaVus, setDejaVus] = useState([])
+  // Lieux aimés (❤️), mémorisés d'une visite à l'autre
+  const [favoris, setFavoris] = useState(chargerFavoris)
 
   // Au premier affichage, on charge les lieux depuis l'API
   // (pendant l'écran de démarrage, pour gagner du temps)
@@ -59,7 +62,7 @@ function App() {
     setChargement(true)
     setErreurSuggestion(null)
     try {
-      const nouvelle = await demanderSuggestion(profil, dejaVus)
+      const nouvelle = await demanderSuggestion(profil, dejaVus, favoris)
       setSuggestion(nouvelle)
       // Quand tous les lieux ont été vus, le serveur recommence : on repart d'une liste vide
       setDejaVus((vus) => (vus.includes(nouvelle.lieu.id) ? [nouvelle.lieu.id] : [...vus, nouvelle.lieu.id]))
@@ -68,6 +71,12 @@ function App() {
     } finally {
       setChargement(false)
     }
+  }
+
+  function changerFavori(idLieu) {
+    const nouveauxFavoris = basculerFavori(favoris, idLieu)
+    setFavoris(nouveauxFavoris)
+    enregistrerFavoris(nouveauxFavoris)
   }
 
   if (splashVisible) {
@@ -92,7 +101,13 @@ function App() {
           {chargement ? 'Recherche en cours…' : suggestion ? 'Autre suggestion' : 'Obtenir des suggestions'}
         </button>
         {erreurSuggestion && <p className="message-erreur" role="alert">{erreurSuggestion}</p>}
-        {suggestion && <FicheSuggestion suggestion={suggestion} />}
+        {suggestion && (
+          <FicheSuggestion
+            suggestion={suggestion}
+            estFavori={favoris.includes(suggestion.lieu.id)}
+            onBasculerFavori={changerFavori}
+          />
+        )}
       </main>
 
       {/* Sans profil : fenêtre "Bienvenue !". Avec un profil (bouton ☰) : modification du profil */}

@@ -63,3 +63,23 @@
   margin: 0;
   font-size: 0.8rem;
 }
+
+/* Titre centré, cœur à droite */
+.fiche-entete {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.fiche-entete .fiche-titre {
+  flex: 1;
+}
+
+.fiche-favori {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}

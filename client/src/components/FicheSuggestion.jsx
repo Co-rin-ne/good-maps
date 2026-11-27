@@ -3,12 +3,24 @@
 import { formaterHeure } from '../services/horaires.js'
 import './FicheSuggestion.css'
 
-function FicheSuggestion({ suggestion }) {
+// estFavori : le lieu est-il dans les favoris ? onBasculerFavori : clic sur le cœur
+function FicheSuggestion({ suggestion, estFavori = false, onBasculerFavori }) {
   const { lieu, titre, description, ouvert, source } = suggestion
 
   return (
     <section className="fiche" aria-live="polite">
-      <h2 className="fiche-titre">{titre}</h2>
+      <div className="fiche-entete">
+        <h2 className="fiche-titre">{titre}</h2>
+        {/* aria-pressed : indique aux lecteurs d'écran si le bouton est "enfoncé" (favori ou non) */}
+        <button
+          className="fiche-favori"
+          onClick={() => onBasculerFavori(lieu.id)}
+          aria-pressed={estFavori}
+          aria-label={estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        >
+          {estFavori ? '❤️' : '🤍'}
+        </button>
+      </div>
       <p className="fiche-description">{description}</p>
 
       <p className="fiche-horaires">

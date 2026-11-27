@@ -22,6 +22,8 @@ Règles :
   Utilise seulement les informations de la description du lieu fournie : n'invente rien
   et n'utilise pas de mots rares ou anglais. Tiens compte du profil (accessibilité, avec qui la personne sort).
 - Privilégie les lieux ouverts maintenant.
+- Si la personne a déjà aimé des lieux, choisis celui qui leur ressemble le plus
+  (même catégorie, même ambiance) et dis-le en une courte phrase.
 
 Exemple de bonne réponse :
 {"id_lieu": 1, "titre": "Visite de l'Opéra Garnier", "description": "Explorez l'Opéra Garnier et son architecture magnifique, avec des installations pour les PMR. Idéal pour une sortie entre amis."}`;
@@ -37,8 +39,8 @@ const FORMAT_REPONSE = {
   required: ['id_lieu', 'titre', 'description'],
 };
 
-// Construit le message envoyé à l'IA : le profil + la liste des lieux possibles
-export function construireMessage(profil, candidats, heure) {
+// Construit le message envoyé à l'IA : le profil, les lieux aimés et la liste des lieux possibles
+export function construireMessage(profil, candidats, heure, lieuxAimes = []) {
   const lieux = candidats.map((lieu) => ({
     id: lieu.id,
     nom: lieu.nom,
@@ -56,13 +58,17 @@ export function construireMessage(profil, candidats, heure) {
 - Sort : ${TEXTES_PROFIL.compagnie[profil.compagnie]}
 - Heure actuelle : ${heure}
 
+Lieux déjà aimés par la personne : ${
+  lieuxAimes.length > 0 ? lieuxAimes.map((lieu) => `${lieu.nom} (${lieu.categorie})`).join(', ') : 'aucun pour le moment'
+}
+
 Lieux possibles (JSON) :
 ${JSON.stringify(lieux, null, 2)}`;
 }
 
 // Envoie la demande à Ollama et renvoie sa réponse brute { id_lieu, titre, description }.
 // Lance une erreur si Ollama ne répond pas ou répond autre chose que du JSON.
-export async function demanderSuggestion(profil, candidats, heure) {
+export async function demanderSuggestion(profil, candidats, heure, lieuxAimes = []) {
   const url = process.env.OLLAMA_URL || 'http://localhost:11434';
   const modele = process.env.OLLAMA_MODEL || 'llama3.2';
 
@@ -77,7 +83,7 @@ export async function demanderSuggestion(profil, candidats, heure) {
       options: { temperature: 0.3 },
       messages: [
         { role: 'system', content: CONSIGNES },
-        { role: 'user', content: construireMessage(profil, candidats, heure) },
+        { role: 'user', content: construireMessage(profil, candidats, heure, lieuxAimes) },
       ],
     }),
     // On n'attend pas indéfiniment : au-delà de 60 s, on abandonne
