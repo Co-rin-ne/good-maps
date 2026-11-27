@@ -3,3 +3,33 @@
   width: 100%;
   height: 380px;
 }
+
+/* Conteneur du marqueur : Leaflet le positionne lui-même, on n'y touche pas */
+.marqueur {
+  background: none;
+  border: none;
+}
+
+/* Goutte : un carré aux coins arrondis sauf un, tourné de 45°.
+   Le coin pointu se retrouve en bas, sur la position du lieu. */
+.marqueur-goutte {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--rouge);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.3);
+}
+
+/* Le point foncé au centre du marqueur */
+.marqueur-point {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: #1f2a44;
+}

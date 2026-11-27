@@ -1,14 +1,16 @@
 // Tests de l'API avec le lanceur de tests intégré à Node (node --test).
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import app from '../app.js';
+import creerApp from '../app.js';
+import { ouvrirBase } from '../db/database.js';
 
 let serveur;
 let url;
 
-// Avant les tests : on démarre l'API sur un port libre choisi par le système (port 0)
+// Avant les tests : on démarre l'API sur un port libre choisi par le système (port 0),
+// avec une base temporaire en mémoire
 before(() => {
-  serveur = app.listen(0);
+  serveur = creerApp(ouvrirBase(':memory:')).listen(0);
   url = `http://localhost:${serveur.address().port}`;
 });
 
