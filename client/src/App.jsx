@@ -2,10 +2,11 @@
 // 1. Écran de démarrage  2. Formulaire de bienvenue (si pas de profil)  3. Carte
 import { useCallback, useEffect, useState } from 'react'
 import Carte from './components/Carte.jsx'
+import FicheSuggestion from './components/FicheSuggestion.jsx'
 import FormulaireBienvenue from './components/FormulaireBienvenue.jsx'
 import Logo from './components/Logo.jsx'
 import Splash from './components/Splash.jsx'
-import { recupererLieux } from './services/api.js'
+import { recupererLieux, demanderSuggestion } from './services/api.js'
 import { chargerProfil, enregistrerProfil } from './services/profil.js'
 import './App.css'
 
@@ -17,6 +18,12 @@ function App() {
   const [profil, setProfil] = useState(chargerProfil)
   // Le formulaire s'affiche seulement si aucun profil n'est enregistré
   const [formulaireVisible, setFormulaireVisible] = useState(() => profil === null)
+  // Suggestion affichée sous la carte, et état de la demande en cours
+  const [suggestion, setSuggestion] = useState(null)
+  const [chargement, setChargement] = useState(false)
+  const [erreurSuggestion, setErreurSuggestion] = useState(null)
+  // Lieux déjà proposés, pour ne pas reproposer le même à chaque clic
+  const [dejaVus, setDejaVus] = useState([])
 
   // Au premier affichage, on charge les lieux depuis l'API
   // (pendant l'écran de démarrage, pour gagner du temps)
@@ -36,6 +43,27 @@ function App() {
     setFormulaireVisible(false)
   }
 
+  async function obtenirSuggestion() {
+    // Sans profil, impossible de personnaliser : on affiche le formulaire
+    if (!profil) {
+      setFormulaireVisible(true)
+      return
+    }
+
+    setChargement(true)
+    setErreurSuggestion(null)
+    try {
+      const nouvelle = await demanderSuggestion(profil, dejaVus)
+      setSuggestion(nouvelle)
+      // Quand tous les lieux ont été vus, le serveur recommence : on repart d'une liste vide
+      setDejaVus((vus) => (vus.includes(nouvelle.lieu.id) ? [nouvelle.lieu.id] : [...vus, nouvelle.lieu.id]))
+    } catch (e) {
+      setErreurSuggestion(e.message)
+    } finally {
+      setChargement(false)
+    }
+  }
+
   if (splashVisible) {
     return <Splash onFin={finSplash} />
   }
@@ -52,7 +80,13 @@ function App() {
       <main>
         {erreur && <p className="message-erreur" role="alert">{erreur}</p>}
         {profil && <p className="salutation">Bonjour {profil.prenom} !</p>}
-        <Carte lieux={lieux} />
+        <Carte lieux={lieux} lieuSelectionne={suggestion?.lieu} />
+
+        <button className="bouton-suggestions" onClick={obtenirSuggestion} disabled={chargement}>
+          {chargement ? 'Recherche en cours…' : suggestion ? 'Autre suggestion' : 'Obtenir des suggestions'}
+        </button>
+        {erreurSuggestion && <p className="message-erreur" role="alert">{erreurSuggestion}</p>}
+        {suggestion && <FicheSuggestion suggestion={suggestion} />}
       </main>
 
       {formulaireVisible && (

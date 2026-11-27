@@ -16,6 +16,16 @@ Application web de **suggestions d'activités adaptées** : l'utilisateur rempli
 | Tests | Vitest (client), `node --test` (serveur) |
 | CI | GitHub Actions |
 
+## Fonctionnalités
+
+- **Écran de démarrage** avec le logo
+- **Formulaire de bienvenue** : prénom, ville, accessibilité, centres d'intérêt, budget, avec qui. Le profil est mémorisé dans le navigateur
+- **Carte** des lieux (marqueurs rouges, popup)
+- **Suggestions par IA** : le serveur filtre les lieux selon le profil (accessibilité PMR, budget, centres d'intérêt, ouvert maintenant), puis l'IA en choisit un et rédige sa présentation. La réponse de l'IA est vérifiée ; si elle est invalide ou si Ollama ne répond pas, une suggestion de secours est affichée
+- **Fiche du lieu** : horaires, adresse, réservation en ligne, appel
+
+> Les horaires des lieux sont indicatifs et simplifiés.
+
 ## Structure
 
 ```
@@ -29,6 +39,9 @@ server/   → l'API (Express)
 Prérequis : Node.js 24 ou plus, et [Ollama](https://ollama.com).
 
 ```bash
+# 0. Le modèle d'IA (une seule fois, environ 2 Go)
+ollama pull llama3.2
+
 # 1. L'API
 cd server
 npm install

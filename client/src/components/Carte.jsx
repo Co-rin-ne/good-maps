@@ -1,6 +1,7 @@
 // Carte interactive affichée avec Leaflet et les fonds de carte OpenStreetMap.
 // react-leaflet fournit des composants React autour de la bibliothèque Leaflet.
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { useEffect } from 'react'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 // Le CSS de Leaflet est obligatoire, sinon les morceaux de carte s'affichent dans le désordre
 import 'leaflet/dist/leaflet.css'
@@ -20,8 +21,19 @@ const iconeMarqueur = L.divIcon({
   popupAnchor: [0, -30],
 })
 
+// Déplace la carte en douceur vers le lieu sélectionné.
+// useMap() donne accès à la carte Leaflet : il ne marche qu'à l'intérieur de MapContainer.
+function Recentrer({ lieu }) {
+  const carte = useMap()
+  useEffect(() => {
+    if (lieu) carte.flyTo([lieu.latitude, lieu.longitude], 15)
+  }, [carte, lieu])
+  return null
+}
+
 // lieux : tableau de lieux venant de l'API (vide par défaut)
-function Carte({ lieux = [] }) {
+// lieuSelectionne : lieu de la suggestion, sur lequel la carte se centre
+function Carte({ lieux = [], lieuSelectionne = null }) {
   return (
     <MapContainer center={CENTRE_PARIS} zoom={ZOOM_PAR_DEFAUT} className="carte">
       {/* Les "tuiles" sont les petites images qui composent le fond de carte.
@@ -42,6 +54,8 @@ function Carte({ lieux = [] }) {
           </Popup>
         </Marker>
       ))}
+
+      <Recentrer lieu={lieuSelectionne} />
     </MapContainer>
   )
 }
