@@ -1,0 +1,33 @@
+/* Icône au-dessus du texte, comme sur la maquette */
+.logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.logo-good {
+  color: var(--rouge);
+}
+
+/* Taille de l'en-tête */
+.logo-petit .logo-icone {
+  width: 24px;
+  height: 32px;
+}
+
+.logo-petit .logo-texte {
+  font-size: 1.3rem;
+}
+
+/* Taille de l'écran de démarrage */
+.logo-grand .logo-icone {
+  width: 54px;
+  height: 72px;
+}
+
+.logo-grand .logo-texte {
+  font-size: 2.2rem;
+}
