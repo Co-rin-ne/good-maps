@@ -8,7 +8,8 @@
     "dev": "node --watch --env-file-if-exists=.env index.js",
     "start": "node --env-file-if-exists=.env index.js",
     "lint": "eslint .",
-    "test": "node --test"
+    "test": "node --test",
+    "db:reset": "node --env-file-if-exists=.env -e \"require('node:fs').rmSync(process.env.DB_PATH || './goodmaps.db', { force: true }); console.log('Base supprimée : elle sera recréée au prochain démarrage du serveur.')\""
   },
   "dependencies": {
     "express": "^5.1.0"
