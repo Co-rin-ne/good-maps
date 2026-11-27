@@ -1,0 +1,5 @@
+/* Leaflet a besoin d'une hauteur fixe, sinon la carte ne s'affiche pas (hauteur 0) */
+.carte {
+  width: 100%;
+  height: 380px;
+}

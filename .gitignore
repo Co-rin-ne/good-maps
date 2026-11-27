@@ -10,3 +10,6 @@ node_modules/
 # Builds et fichiers système
 dist/
 .DS_Store
+
+# Réglages locaux de Claude Code (aperçu navigateur)
+.claude/
