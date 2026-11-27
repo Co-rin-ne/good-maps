@@ -46,3 +46,29 @@ test('la croix ferme le formulaire', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Fermer' }))
   expect(onFermer).toHaveBeenCalled()
 })
+
+test('pré-remplit le formulaire avec le profil existant et change les textes', () => {
+  const onValider = vi.fn()
+  const profilInitial = {
+    prenom: 'Corinne', ville: 'paris', accessibilite: 'pmr',
+    interets: ['nature'], budget: 'gratuit', compagnie: 'famille',
+  }
+  render(
+    <FormulaireBienvenue
+      onValider={onValider}
+      onFermer={vi.fn()}
+      profilInitial={profilInitial}
+      titre="Mon profil"
+      texteBouton="Enregistrer"
+    />,
+  )
+
+  expect(screen.getByRole('dialog', { name: 'Mon profil' })).toBeInTheDocument()
+  expect(screen.getByLabelText('Prénom')).toHaveValue('Corinne')
+  expect(screen.getByLabelText('Nature')).toBeChecked()
+
+  // On change seulement le budget : le reste du profil est conservé
+  fireEvent.change(screen.getByLabelText('Budget'), { target: { value: '€€€' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+  expect(onValider).toHaveBeenCalledWith({ ...profilInitial, budget: '€€€' })
+})

@@ -1,5 +1,7 @@
 // Écran 2 de la maquette : fenêtre "Bienvenue !" par-dessus la carte,
 // avec 6 questions pour personnaliser les suggestions.
+// Réutilisé par le bouton filtres (☰) pour modifier le profil : il est alors
+// pré-rempli et son titre et son bouton changent.
 import { useState } from 'react'
 import {
   VILLES, ACCESSIBILITES, INTERETS, BUDGETS, COMPAGNIES,
@@ -25,8 +27,17 @@ function Options({ choix }) {
 
 // onValider(profil) : appelé avec le profil rempli et valide
 // onFermer() : appelé quand on clique sur la croix
-function FormulaireBienvenue({ onValider, onFermer }) {
-  const [profil, setProfil] = useState(PROFIL_VIDE)
+// profilInitial : profil déjà enregistré, pour pré-remplir le formulaire
+// titre, intro, texteBouton : textes, pour réutiliser la fenêtre ailleurs
+function FormulaireBienvenue({
+  onValider,
+  onFermer,
+  profilInitial = null,
+  titre = 'Bienvenue !',
+  intro = "Pour mieux personnaliser vos suggestions d'activités, merci de remplir ce formulaire.",
+  texteBouton = 'Passer à la carte',
+}) {
+  const [profil, setProfil] = useState({ ...PROFIL_VIDE, ...profilInitial })
   const [erreurs, setErreurs] = useState({})
 
   // Met à jour un champ du profil sans toucher aux autres
@@ -57,10 +68,8 @@ function FormulaireBienvenue({ onValider, onFermer }) {
     <div className="fond-modale">
       <div className="modale" role="dialog" aria-modal="true" aria-labelledby="titre-bienvenue">
         <button className="modale-fermer" onClick={onFermer} aria-label="Fermer">×</button>
-        <h2 id="titre-bienvenue">Bienvenue !</h2>
-        <p className="modale-intro">
-          Pour mieux personnaliser vos suggestions d'activités, merci de remplir ce formulaire.
-        </p>
+        <h2 id="titre-bienvenue">{titre}</h2>
+        <p className="modale-intro">{intro}</p>
 
         {/* noValidate : on affiche nos propres messages d'erreur, en français */}
         <form onSubmit={envoyer} noValidate>
@@ -126,7 +135,7 @@ function FormulaireBienvenue({ onValider, onFermer }) {
           </select>
           {erreurs.compagnie && <p className="champ-erreur">{erreurs.compagnie}</p>}
 
-          <button type="submit" className="bouton-principal">Passer à la carte</button>
+          <button type="submit" className="bouton-principal">{texteBouton}</button>
         </form>
       </div>
     </div>
