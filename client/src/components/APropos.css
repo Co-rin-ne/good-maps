@@ -1,0 +1,26 @@
+/* Texte de la fenêtre "À propos" : aligné à gauche pour être plus facile à lire */
+.a-propos {
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.a-propos h3 {
+  margin: 16px 0 4px;
+  color: var(--rouge);
+  font-size: 0.95rem;
+}
+
+.a-propos p {
+  margin: 0;
+}
+
+.a-propos a {
+  color: inherit;
+}
+
+.a-propos .a-propos-credit {
+  margin-top: 20px;
+  font-size: 0.75rem;
+  text-align: center;
+}

@@ -7,6 +7,7 @@ import {
   VILLES, ACCESSIBILITES, INTERETS, BUDGETS, COMPAGNIES,
   PRENOM_LONGUEUR_MAX, validerProfil,
 } from '../services/profil.js'
+import Modale from './Modale.jsx'
 import './FormulaireBienvenue.css'
 
 const PROFIL_VIDE = {
@@ -65,80 +66,76 @@ function FormulaireBienvenue({
   }
 
   return (
-    <div className="fond-modale">
-      <div className="modale" role="dialog" aria-modal="true" aria-labelledby="titre-bienvenue">
-        <button className="modale-fermer" onClick={onFermer} aria-label="Fermer">×</button>
-        <h2 id="titre-bienvenue">{titre}</h2>
-        <p className="modale-intro">{intro}</p>
+    <Modale titre={titre} onFermer={onFermer}>
+      <p className="modale-intro">{intro}</p>
 
-        {/* noValidate : on affiche nos propres messages d'erreur, en français */}
-        <form onSubmit={envoyer} noValidate>
-          <label htmlFor="prenom">Prénom</label>
-          <input
-            id="prenom"
-            value={profil.prenom}
-            maxLength={PRENOM_LONGUEUR_MAX}
-            onChange={(e) => changerChamp('prenom', e.target.value)}
-          />
-          {erreurs.prenom && <p className="champ-erreur">{erreurs.prenom}</p>}
+      {/* noValidate : on affiche nos propres messages d'erreur, en français */}
+      <form onSubmit={envoyer} noValidate>
+        <label htmlFor="prenom">Prénom</label>
+        <input
+          id="prenom"
+          value={profil.prenom}
+          maxLength={PRENOM_LONGUEUR_MAX}
+          onChange={(e) => changerChamp('prenom', e.target.value)}
+        />
+        {erreurs.prenom && <p className="champ-erreur">{erreurs.prenom}</p>}
 
-          <label htmlFor="ville">Ville</label>
-          <select id="ville" value={profil.ville} onChange={(e) => changerChamp('ville', e.target.value)}>
-            <Options choix={VILLES} />
-          </select>
-          {erreurs.ville && <p className="champ-erreur">{erreurs.ville}</p>}
+        <label htmlFor="ville">Ville</label>
+        <select id="ville" value={profil.ville} onChange={(e) => changerChamp('ville', e.target.value)}>
+          <Options choix={VILLES} />
+        </select>
+        {erreurs.ville && <p className="champ-erreur">{erreurs.ville}</p>}
 
-          <label htmlFor="accessibilite">Besoins d'accessibilité</label>
-          <select
-            id="accessibilite"
-            value={profil.accessibilite}
-            onChange={(e) => changerChamp('accessibilite', e.target.value)}
-          >
-            <option value="" disabled>Choisir…</option>
-            <Options choix={ACCESSIBILITES} />
-          </select>
-          {erreurs.accessibilite && <p className="champ-erreur">{erreurs.accessibilite}</p>}
+        <label htmlFor="accessibilite">Besoins d'accessibilité</label>
+        <select
+          id="accessibilite"
+          value={profil.accessibilite}
+          onChange={(e) => changerChamp('accessibilite', e.target.value)}
+        >
+          <option value="" disabled>Choisir…</option>
+          <Options choix={ACCESSIBILITES} />
+        </select>
+        {erreurs.accessibilite && <p className="champ-erreur">{erreurs.accessibilite}</p>}
 
-          {/* fieldset + legend : regroupe les cases à cocher sous un même titre */}
-          <fieldset>
-            <legend>Centres d'intérêt</legend>
-            <div className="cases">
-              {Object.entries(INTERETS).map(([valeur, texte]) => (
-                <label key={valeur} className="case">
-                  <input
-                    type="checkbox"
-                    checked={profil.interets.includes(valeur)}
-                    onChange={() => basculerInteret(valeur)}
-                  />
-                  {texte}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          {erreurs.interets && <p className="champ-erreur">{erreurs.interets}</p>}
+        {/* fieldset + legend : regroupe les cases à cocher sous un même titre */}
+        <fieldset>
+          <legend>Centres d'intérêt</legend>
+          <div className="cases">
+            {Object.entries(INTERETS).map(([valeur, texte]) => (
+              <label key={valeur} className="case">
+                <input
+                  type="checkbox"
+                  checked={profil.interets.includes(valeur)}
+                  onChange={() => basculerInteret(valeur)}
+                />
+                {texte}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        {erreurs.interets && <p className="champ-erreur">{erreurs.interets}</p>}
 
-          <label htmlFor="budget">Budget</label>
-          <select id="budget" value={profil.budget} onChange={(e) => changerChamp('budget', e.target.value)}>
-            <option value="" disabled>Choisir…</option>
-            <Options choix={BUDGETS} />
-          </select>
-          {erreurs.budget && <p className="champ-erreur">{erreurs.budget}</p>}
+        <label htmlFor="budget">Budget</label>
+        <select id="budget" value={profil.budget} onChange={(e) => changerChamp('budget', e.target.value)}>
+          <option value="" disabled>Choisir…</option>
+          <Options choix={BUDGETS} />
+        </select>
+        {erreurs.budget && <p className="champ-erreur">{erreurs.budget}</p>}
 
-          <label htmlFor="compagnie">Avec qui ?</label>
-          <select
-            id="compagnie"
-            value={profil.compagnie}
-            onChange={(e) => changerChamp('compagnie', e.target.value)}
-          >
-            <option value="" disabled>Choisir…</option>
-            <Options choix={COMPAGNIES} />
-          </select>
-          {erreurs.compagnie && <p className="champ-erreur">{erreurs.compagnie}</p>}
+        <label htmlFor="compagnie">Avec qui ?</label>
+        <select
+          id="compagnie"
+          value={profil.compagnie}
+          onChange={(e) => changerChamp('compagnie', e.target.value)}
+        >
+          <option value="" disabled>Choisir…</option>
+          <Options choix={COMPAGNIES} />
+        </select>
+        {erreurs.compagnie && <p className="champ-erreur">{erreurs.compagnie}</p>}
 
-          <button type="submit" className="bouton-principal">{texteBouton}</button>
-        </form>
-      </div>
-    </div>
+        <button type="submit" className="bouton-principal">{texteBouton}</button>
+      </form>
+    </Modale>
   )
 }
 
