@@ -27,3 +27,12 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+/* Message affiché si l'API ne répond pas */
+.message-erreur {
+  margin: 0 16px 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #ffe5e5;
+  color: #a10000;
+}
